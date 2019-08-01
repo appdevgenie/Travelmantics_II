@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ems="10"
-        android:inputType="textPersonName"
+        android:inputType="number"
         android:hint="Cost"
         app:layout_constraintEnd_toEndOf="@+id/etItemDestinationCity"
         app:layout_constraintStart_toStartOf="@+id/etItemDestinationCity"
@@ -41,7 +41,7 @@
         android:layout_marginTop="16dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:hint="Name"
+        android:hint="Resort"
         app:layout_constraintEnd_toEndOf="@+id/etItemDestinationCost"
         app:layout_constraintStart_toStartOf="@+id/etItemDestinationCost"
         app:layout_constraintTop_toBottomOf="@+id/etItemDestinationCost" />

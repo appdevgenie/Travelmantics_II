@@ -7,29 +7,41 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.appdevgenie.travelmanticsii.R;
+import com.appdevgenie.travelmanticsii.models.HolidayDeal;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class AdminActivity extends AppCompatActivity {
 
-    private TextView tvCity;
-    private TextView tvCost;
-    private TextView tvReort;
+    private EditText etCity;
+    private EditText etCost;
+    private EditText etResort;
+
+    private HolidayDeal holidayDeal;
+
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin);
 
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference().child("holidayDeal");
+
         setupVariables();
     }
 
     private void setupVariables() {
 
-        tvCity = findViewById(R.id.tvItemDestinationCity);
-        tvCost = findViewById(R.id.tvItemDestinationCost);
-        tvReort = findViewById(R.id.tvItemDestinationResort);
+        etCity = findViewById(R.id.etItemDestinationCity);
+        etCost = findViewById(R.id.etItemDestinationCost);
+        etResort = findViewById(R.id.etItemDestinationResort);
     }
 
     @Override
@@ -58,6 +70,17 @@ public class AdminActivity extends AppCompatActivity {
 
     private void saveHolidayDeal() {
 
+        String city = etCity.getText().toString();
+        String cost = etCost.getText().toString();
+        String resort = etResort.getText().toString();
+
+        holidayDeal = new HolidayDeal(city, cost, resort);
+
+        if(holidayDeal.getId() == null){
+            databaseReference.push().setValue(holidayDeal);
+        }else{
+            databaseReference.child(holidayDeal.getId()).setValue(holidayDeal);
+        }
 
     }
 
