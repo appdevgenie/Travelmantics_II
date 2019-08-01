@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.AdminActivity">
+
+    <EditText
+        android:id="@+id/etItemDestinationCity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="City"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/etItemDestinationCost"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Cost"
+        app:layout_constraintEnd_toEndOf="@+id/etItemDestinationCity"
+        app:layout_constraintStart_toStartOf="@+id/etItemDestinationCity"
+        app:layout_constraintTop_toBottomOf="@+id/etItemDestinationCity" />
+
+    <EditText
+        android:id="@+id/etItemDestinationResort"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Name"
+        app:layout_constraintEnd_toEndOf="@+id/etItemDestinationCost"
+        app:layout_constraintStart_toStartOf="@+id/etItemDestinationCost"
+        app:layout_constraintTop_toBottomOf="@+id/etItemDestinationCost" />
+
+    <Button
+        android:id="@+id/bSelectImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Select image"
+        app:layout_constraintEnd_toEndOf="@+id/etItemDestinationResort"
+        app:layout_constraintStart_toStartOf="@+id/etItemDestinationResort"
+        app:layout_constraintTop_toBottomOf="@+id/etItemDestinationResort" />
+
+    <ImageView
+        android:id="@+id/ivResort"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bSelectImage"
+        app:srcCompat="@android:color/transparent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
