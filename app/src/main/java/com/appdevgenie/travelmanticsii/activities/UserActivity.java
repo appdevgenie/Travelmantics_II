@@ -1,5 +1,6 @@
 package com.appdevgenie.travelmanticsii.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -8,37 +9,65 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.appdevgenie.travelmanticsii.R;
+import com.appdevgenie.travelmanticsii.adapters.UserRecyclerAdapter;
+import com.appdevgenie.travelmanticsii.models.HolidayDeal;
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class UserActivity extends AppCompatActivity {
+public class UserActivity extends AppCompatActivity implements ChildEventListener {
 
     private static final int RC_SIGN_IN = 101;
 
     private RecyclerView recyclerView;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
+    private ArrayList<HolidayDeal> holidayDeals = new ArrayList<>();
+    private Context context;
+    private UserRecyclerAdapter userRecyclerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
 
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference().child("holidayDeal");
+        databaseReference.addChildEventListener(this);
+
+        setupFirebaseAuth();
+
+        setupVariables();
+    }
+
+    private void setupFirebaseAuth() {
+
         firebaseAuth = FirebaseAuth.getInstance();
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if(firebaseAuth.getCurrentUser() == null){
+                if (firebaseAuth.getCurrentUser() == null) {
                     signIn();
-                }else {
-                    Toast.makeText(getApplicationContext(), "Welcome back " + firebaseAuth.getCurrentUser().getDisplayName(), Toast.LENGTH_LONG).show();
+                } else {
+                    //Toast.makeText(getApplicationContext(), "Welcome back " + firebaseAuth.getCurrentUser().getDisplayName(), Toast.LENGTH_LONG).show();
                 }
             }
         };
@@ -60,6 +89,17 @@ public class UserActivity extends AppCompatActivity {
                 RC_SIGN_IN);
     }
 
+    private void setupVariables() {
+
+        context = getApplicationContext();
+
+        recyclerView = findViewById(R.id.rvResortList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        userRecyclerAdapter = new UserRecyclerAdapter(context, holidayDeals);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(userRecyclerAdapter);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -78,6 +118,18 @@ public class UserActivity extends AppCompatActivity {
             case R.id.add_menu:
                 Intent intent = new Intent(UserActivity.this, AdminActivity.class);
                 startActivity(intent);
+                return true;
+
+            case R.id.sign_out_menu:
+                AuthUI.getInstance()
+                        .signOut(this)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            public void onComplete(@NonNull Task<Void> task) {
+                                finish();
+                                attachListener();
+                            }
+                        });
+                detachListener();
                 return true;
         }
 
@@ -102,5 +154,33 @@ public class UserActivity extends AppCompatActivity {
 
     public void detachListener() {
         firebaseAuth.removeAuthStateListener(authStateListener);
+    }
+
+    @Override
+    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+        HolidayDeal holidayDeal = dataSnapshot.getValue(HolidayDeal.class);
+        holidayDeals.add(holidayDeal);
+        userRecyclerAdapter.notifyItemInserted(holidayDeals.size() -1);
+    }
+
+    @Override
+    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+    }
+
+    @Override
+    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+    }
+
+    @Override
+    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+    }
+
+    @Override
+    public void onCancelled(@NonNull DatabaseError databaseError) {
+
     }
 }

@@ -19,6 +19,11 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
     private Context context;
     private ArrayList<HolidayDeal> holidayDeals;
 
+    public UserRecyclerAdapter(Context context, ArrayList<HolidayDeal> holidayDeals) {
+        this.context = context;
+        this.holidayDeals = holidayDeals;
+    }
+
     @NonNull
     @Override
     public UserRecyclerAdapter.UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -37,7 +42,11 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
 
     @Override
     public int getItemCount() {
-        return holidayDeals.size();
+        if(holidayDeals == null){
+            return 0;
+        }else {
+            return holidayDeals.size();
+        }
     }
 
     class UserViewHolder extends RecyclerView.ViewHolder{

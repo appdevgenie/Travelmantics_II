@@ -7,6 +7,9 @@ public class HolidayDeal {
     private String resort;
     private String cost;
 
+    public HolidayDeal() {
+    }
+
     public HolidayDeal(String city, String resort, String cost) {
         this.city = city;
         this.resort = resort;

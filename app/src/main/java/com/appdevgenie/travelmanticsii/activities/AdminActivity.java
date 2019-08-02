@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.appdevgenie.travelmanticsii.R;
 import com.appdevgenie.travelmanticsii.models.HolidayDeal;
@@ -58,6 +59,8 @@ public class AdminActivity extends AppCompatActivity {
         switch (selectedItem){
             case R.id.save_menu:
                 saveHolidayDeal();
+                Toast.makeText(getApplicationContext(), "Holiday deal saved!", Toast.LENGTH_LONG).show();
+                finish();
                 return true;
 
             case R.id.delete_menu:
@@ -74,7 +77,7 @@ public class AdminActivity extends AppCompatActivity {
         String cost = etCost.getText().toString();
         String resort = etResort.getText().toString();
 
-        holidayDeal = new HolidayDeal(city, cost, resort);
+        holidayDeal = new HolidayDeal(city, resort, cost);
 
         if(holidayDeal.getId() == null){
             databaseReference.push().setValue(holidayDeal);
