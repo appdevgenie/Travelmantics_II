@@ -1,6 +1,7 @@
 package com.appdevgenie.travelmanticsii.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +11,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.appdevgenie.travelmanticsii.R;
+import com.appdevgenie.travelmanticsii.activities.AdminActivity;
 import com.appdevgenie.travelmanticsii.models.HolidayDeal;
 
 import java.util.ArrayList;
+
+import static com.appdevgenie.travelmanticsii.utils.Constants.INTENT_EXTRA_DEAL;
 
 public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapter.UserViewHolder> {
 
@@ -49,7 +53,7 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
         }
     }
 
-    class UserViewHolder extends RecyclerView.ViewHolder{
+    class UserViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView tvCity;
         private TextView tvResort;
@@ -61,6 +65,17 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
             tvCity = itemView.findViewById(R.id.tvItemDestinationCity);
             tvResort = itemView.findViewById(R.id.tvItemDestinationResort);
             tvCost = itemView.findViewById(R.id.tvItemDestinationCost);
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+
+            HolidayDeal holidayDeal = holidayDeals.get(getAdapterPosition());
+            Intent intent = new Intent(context, AdminActivity.class);
+            intent.putExtra(INTENT_EXTRA_DEAL, holidayDeal);
+            context.startActivity(intent);
         }
     }
 }

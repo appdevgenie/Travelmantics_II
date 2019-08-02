@@ -3,6 +3,7 @@ package com.appdevgenie.travelmanticsii.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +16,9 @@ import com.appdevgenie.travelmanticsii.R;
 import com.appdevgenie.travelmanticsii.models.HolidayDeal;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import static com.appdevgenie.travelmanticsii.utils.Constants.DB_CHILD;
+import static com.appdevgenie.travelmanticsii.utils.Constants.INTENT_EXTRA_DEAL;
 
 public class AdminActivity extends AppCompatActivity {
 
@@ -33,9 +37,20 @@ public class AdminActivity extends AppCompatActivity {
         setContentView(R.layout.activity_admin);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child("holidayDeal");
+        databaseReference = firebaseDatabase.getReference().child(DB_CHILD);
 
         setupVariables();
+
+        Intent intent = getIntent();
+        if(intent != null){
+            HolidayDeal holidayDeal = intent.getParcelableExtra(INTENT_EXTRA_DEAL);
+            if(holidayDeal != null){
+                etCity.setText(holidayDeal.getCity());
+                etResort.setText(holidayDeal.getResort());
+                etCost.setText(holidayDeal.getCost());
+                this.holidayDeal = holidayDeal;
+            }
+        }
     }
 
     private void setupVariables() {
@@ -65,6 +80,9 @@ public class AdminActivity extends AppCompatActivity {
 
             case R.id.delete_menu:
                 deleteHolidayDeal();
+                Toast.makeText(getApplicationContext(), "Holiday deal deleted!", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(AdminActivity.this, UserActivity.class);
+                startActivity(intent);
                 return true;
         }
 
@@ -80,13 +98,19 @@ public class AdminActivity extends AppCompatActivity {
         holidayDeal = new HolidayDeal(city, resort, cost);
 
         if(holidayDeal.getId() == null){
+            //new holiday deal
             databaseReference.push().setValue(holidayDeal);
         }else{
+            //edit holiday deal
             databaseReference.child(holidayDeal.getId()).setValue(holidayDeal);
         }
 
     }
 
     private void deleteHolidayDeal() {
+
+        if(holidayDeal != null){
+            databaseReference.child(holidayDeal.getId()).removeValue();
+        }
     }
 }

@@ -31,9 +31,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class UserActivity extends AppCompatActivity implements ChildEventListener {
+import static com.appdevgenie.travelmanticsii.utils.Constants.DB_CHILD;
+import static com.appdevgenie.travelmanticsii.utils.Constants.RC_SIGN_IN;
 
-    private static final int RC_SIGN_IN = 101;
+public class UserActivity extends AppCompatActivity implements ChildEventListener {
 
     private RecyclerView recyclerView;
     private FirebaseAuth firebaseAuth;
@@ -49,13 +50,16 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
 
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child("holidayDeal");
-        databaseReference.addChildEventListener(this);
-
+        setupFirebaseDatabase();
         setupFirebaseAuth();
-
         setupVariables();
+    }
+
+    private void setupFirebaseDatabase() {
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference().child(DB_CHILD);
+        databaseReference.addChildEventListener(this);
     }
 
     private void setupFirebaseAuth() {
@@ -160,6 +164,9 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
         HolidayDeal holidayDeal = dataSnapshot.getValue(HolidayDeal.class);
+        if (holidayDeal != null) {
+            holidayDeal.setId(dataSnapshot.getKey());
+        }
         holidayDeals.add(holidayDeal);
         userRecyclerAdapter.notifyItemInserted(holidayDeals.size() -1);
     }
