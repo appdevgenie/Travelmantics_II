@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -78,6 +79,7 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
         public void onClick(View view) {
 
             HolidayDeal holidayDeal = holidayDeals.get(getAdapterPosition());
+            //Toast.makeText(context, String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(context, AdminActivity.class);
             intent.putExtra(INTENT_EXTRA_DEAL, holidayDeal);
             context.startActivity(intent);

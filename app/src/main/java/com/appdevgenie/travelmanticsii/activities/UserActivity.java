@@ -189,7 +189,16 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
 
         Log.d(TAG, "onChildRemoved: ");
 
-        //TODO: fix recyclerview not updating after deletion
+        String key = dataSnapshot.getKey();
+
+        for (int i = 0; i < holidayDeals.size(); i++) {
+            if (holidayDeals.get(i).getId().equals(key)) {
+                holidayDeals.remove(i);
+                break;
+            }
+        }
+
+        userRecyclerAdapter.notifyDataSetChanged();
 
         //HolidayDeal holidayDeal = dataSnapshot.getValue(HolidayDeal.class);
         //holidayDeals.remove(holidayDeal);
