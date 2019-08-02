@@ -9,14 +9,18 @@ public class HolidayDeal implements Parcelable {
     private String city;
     private String resort;
     private String cost;
+    private String imageUrl;
+    private String imageName;
 
     public HolidayDeal() {
     }
 
-    public HolidayDeal(String city, String resort, String cost) {
+    public HolidayDeal(String city, String resort, String cost, String imageUrl, String imageName) {
         this.city = city;
         this.resort = resort;
         this.cost = cost;
+        this.imageUrl = imageUrl;
+        this.imageName = imageName;
     }
 
     protected HolidayDeal(Parcel in) {
@@ -24,6 +28,8 @@ public class HolidayDeal implements Parcelable {
         city = in.readString();
         resort = in.readString();
         cost = in.readString();
+        imageUrl = in.readString();
+        imageName = in.readString();
     }
 
     public static final Creator<HolidayDeal> CREATOR = new Creator<HolidayDeal>() {
@@ -68,6 +74,22 @@ public class HolidayDeal implements Parcelable {
 
     public void setCost(String cost) {
         this.cost = cost;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 
     @Override

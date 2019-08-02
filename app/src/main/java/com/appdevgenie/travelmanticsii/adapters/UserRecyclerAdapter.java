@@ -53,6 +53,11 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
         }
     }
 
+    public void setAdapterData(ArrayList<HolidayDeal> holidayDealArrayList){
+        holidayDeals = holidayDealArrayList;
+        notifyDataSetChanged();
+    }
+
     class UserViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView tvCity;

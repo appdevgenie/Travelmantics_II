@@ -3,10 +3,10 @@ package com.appdevgenie.travelmanticsii.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,10 +31,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.appdevgenie.travelmanticsii.utils.Constants.DB_CHILD;
+import static com.appdevgenie.travelmanticsii.utils.Constants.DB_CHILD_DEAL;
 import static com.appdevgenie.travelmanticsii.utils.Constants.RC_SIGN_IN;
 
 public class UserActivity extends AppCompatActivity implements ChildEventListener {
+
+    public static final String TAG = "userActivity";
 
     private RecyclerView recyclerView;
     private FirebaseAuth firebaseAuth;
@@ -58,7 +60,7 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
     private void setupFirebaseDatabase() {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child(DB_CHILD);
+        databaseReference = firebaseDatabase.getReference().child(DB_CHILD_DEAL);
         databaseReference.addChildEventListener(this);
     }
 
@@ -98,10 +100,11 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
         context = getApplicationContext();
 
         recyclerView = findViewById(R.id.rvResortList);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         userRecyclerAdapter = new UserRecyclerAdapter(context, holidayDeals);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(userRecyclerAdapter);
+
     }
 
     @Override
@@ -163,6 +166,8 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
     @Override
     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
+        Log.d(TAG, "onChildAdded: ");
+
         HolidayDeal holidayDeal = dataSnapshot.getValue(HolidayDeal.class);
         if (holidayDeal != null) {
             holidayDeal.setId(dataSnapshot.getKey());
@@ -174,11 +179,25 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
     @Override
     public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
+        Log.d(TAG, "onChildChanged: ");
+
+        //userRecyclerAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
 
+        Log.d(TAG, "onChildRemoved: ");
+
+        //TODO: fix recyclerview not updating after deletion
+
+        //HolidayDeal holidayDeal = dataSnapshot.getValue(HolidayDeal.class);
+        //holidayDeals.remove(holidayDeal);
+        //userRecyclerAdapter.notifyDataSetChanged();
+        //userRecyclerAdapter.setAdapterData(holidayDeals);
+
+        /*String posKey = databaseReference.child(holidayDeal.getId()).getKey();
+        holidayDeals.remove(holidayDeal.getId());*/
     }
 
     @Override
