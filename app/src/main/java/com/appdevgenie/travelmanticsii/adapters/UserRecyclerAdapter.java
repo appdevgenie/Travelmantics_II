@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.appdevgenie.travelmanticsii.R;
 import com.appdevgenie.travelmanticsii.activities.AdminActivity;
 import com.appdevgenie.travelmanticsii.models.HolidayDeal;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
@@ -43,6 +45,13 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
         holder.tvCity.setText(holidayDeal.getCity());
         holder.tvCost.setText(holidayDeal.getCost());
         holder.tvResort.setText(holidayDeal.getResort());
+
+        Glide
+                .with(context)
+                .load(holidayDeal.getImageUrl())
+                .centerCrop()
+                .placeholder(R.drawable.ic_hotel_black_24dp)
+                .into(holder.imageView);
     }
 
     @Override
@@ -54,16 +63,17 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
         }
     }
 
-    public void setAdapterData(ArrayList<HolidayDeal> holidayDealArrayList){
+    /*public void setAdapterData(ArrayList<HolidayDeal> holidayDealArrayList){
         holidayDeals = holidayDealArrayList;
         notifyDataSetChanged();
-    }
+    }*/
 
     class UserViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView tvCity;
         private TextView tvResort;
         private TextView tvCost;
+        private ImageView imageView;
 
         public UserViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -71,6 +81,7 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
             tvCity = itemView.findViewById(R.id.tvItemDestinationCity);
             tvResort = itemView.findViewById(R.id.tvItemDestinationResort);
             tvCost = itemView.findViewById(R.id.tvItemDestinationCost);
+            imageView = itemView.findViewById(R.id.ivItemDestination);
 
             itemView.setOnClickListener(this);
         }
@@ -82,6 +93,7 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
             //Toast.makeText(context, String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(context, AdminActivity.class);
             intent.putExtra(INTENT_EXTRA_DEAL, holidayDeal);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         }
     }

@@ -103,5 +103,7 @@ public class HolidayDeal implements Parcelable {
         parcel.writeString(city);
         parcel.writeString(resort);
         parcel.writeString(cost);
+        parcel.writeString(imageUrl);
+        parcel.writeString(imageName);
     }
 }

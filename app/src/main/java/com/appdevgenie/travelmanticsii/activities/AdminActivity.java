@@ -70,7 +70,10 @@ public class AdminActivity extends AppCompatActivity {
                 etCity.setText(holidayDeal.getCity());
                 etResort.setText(holidayDeal.getResort());
                 etCost.setText(holidayDeal.getCost());
+
+
                 this.holidayDeal = holidayDeal;
+                loadImage(holidayDeal.getImageUrl());
             }
         }
     }
@@ -135,26 +138,31 @@ public class AdminActivity extends AppCompatActivity {
             Uri imageUri = data.getData();
 
             final StorageReference storageImageRef = storageReference.child(imageUri.getLastPathSegment());
-            storageImageRef.putFile(imageUri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            storageImageRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    storageImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            String url = uri.toString();
+                            String imagePath = uri.getPath();
+                            holidayDeal.setImageUrl(url);
+                            holidayDeal.setImageName(imagePath);
 
-                    //TODO: get image url from firebase
-                    String url = storageImageRef.getDownloadUrl().toString();
-                    String imagePath = taskSnapshot.getMetadata().getPath();
-                    holidayDeal.setImageUrl(url);
-                    holidayDeal.setImageName(imagePath);
+                            loadImage(url);
 
-                    loadImage(url);
+                            Toast.makeText(getApplicationContext(), "Image saved!", Toast.LENGTH_LONG).show();
+                        }
+                    });
 
-                    Toast.makeText(getApplicationContext(), "Image saved!", Toast.LENGTH_LONG).show();
+
                 }
             });
         }
     }
 
     private void loadImage(String url) {
-        Toast.makeText(getApplicationContext(), url, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), url, Toast.LENGTH_LONG).show();
 
         Log.d(TAG, "loadImage: " + url);
 
@@ -166,7 +174,7 @@ public class AdminActivity extends AppCompatActivity {
                 .into(imageView);*/
 
         Glide
-                .with(this)
+                .with(getApplicationContext())
                 .load(url)
                 .centerCrop()
                 .placeholder(R.drawable.ic_hotel_black_24dp)
