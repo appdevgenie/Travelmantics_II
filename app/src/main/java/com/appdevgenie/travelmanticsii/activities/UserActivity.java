@@ -44,6 +44,7 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private ArrayList<HolidayDeal> holidayDeals = new ArrayList<>();
+    private ArrayList<String> keys = new ArrayList<>();
     private Context context;
     private UserRecyclerAdapter userRecyclerAdapter;
 
@@ -170,7 +171,9 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
 
         HolidayDeal holidayDeal = dataSnapshot.getValue(HolidayDeal.class);
         if (holidayDeal != null) {
-            holidayDeal.setId(dataSnapshot.getKey());
+            String key = dataSnapshot.getKey();
+            holidayDeal.setId(key);
+            keys.add(key);
         }
         holidayDeals.add(holidayDeal);
         userRecyclerAdapter.notifyItemInserted(holidayDeals.size() -1);
@@ -181,7 +184,12 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
 
         Log.d(TAG, "onChildChanged: ");
 
-        //userRecyclerAdapter.notifyDataSetChanged();
+        HolidayDeal holidayDeal = dataSnapshot.getValue(HolidayDeal.class);
+        String key = dataSnapshot.getKey();
+        int index = keys.indexOf(key);
+        holidayDeals.set(index, holidayDeal);
+
+        userRecyclerAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -189,7 +197,16 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
 
         Log.d(TAG, "onChildRemoved: ");
 
+        //HolidayDeal holidayDeal = dataSnapshot.getValue(HolidayDeal.class);
         String key = dataSnapshot.getKey();
+        int index = keys.indexOf(key);
+        if (index != -1) {
+            holidayDeals.remove(index);
+            keys.remove(index);
+            userRecyclerAdapter.notifyDataSetChanged();
+        }
+
+        /*String key = dataSnapshot.getKey();
 
         for (int i = 0; i < holidayDeals.size(); i++) {
             if (holidayDeals.get(i).getId().equals(key)) {
@@ -198,7 +215,7 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
             }
         }
 
-        userRecyclerAdapter.notifyDataSetChanged();
+        userRecyclerAdapter.notifyDataSetChanged();*/
 
         //HolidayDeal holidayDeal = dataSnapshot.getValue(HolidayDeal.class);
         //holidayDeals.remove(holidayDeal);
