@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -31,6 +32,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
+
 import static com.appdevgenie.travelmanticsii.utils.Constants.DB_CHILD_DEAL;
 import static com.appdevgenie.travelmanticsii.utils.Constants.DB_CHILD_DEAL_PICS;
 import static com.appdevgenie.travelmanticsii.utils.Constants.INTENT_EXTRA_DEAL;
@@ -46,6 +51,7 @@ public class AdminActivity extends AppCompatActivity {
     private Button bSelectImage;
     private ImageView imageView;
     private FloatingActionButton floatingActionButton;
+    private RatingBar ratingBar;
 
     private HolidayDeal holidayDeal = new HolidayDeal();
 
@@ -72,8 +78,12 @@ public class AdminActivity extends AppCompatActivity {
             if (holidayDeal != null) {
                 etCity.setText(holidayDeal.getCity());
                 etResort.setText(holidayDeal.getResort());
-                etCost.setText(holidayDeal.getCost());
 
+                DecimalFormat format = new DecimalFormat("###,###,##0.00");
+                String currency = format.format(Double.parseDouble(holidayDeal.getCost()));
+                etCost.setText(currency);
+
+                ratingBar.setRating(Float.valueOf(holidayDeal.getRating()));
 
                 this.holidayDeal = holidayDeal;
                 loadImage(holidayDeal.getImageUrl());
@@ -115,6 +125,8 @@ public class AdminActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        ratingBar = findViewById(R.id.ratingBar);
     }
 
     @Override
@@ -192,7 +204,7 @@ public class AdminActivity extends AppCompatActivity {
         Glide
                 .with(getApplicationContext())
                 .load(url)
-                .centerCrop()
+                .fitCenter()
                 .placeholder(R.drawable.ic_hotel_black_24dp)
                 .into(imageView);
     }
@@ -202,10 +214,12 @@ public class AdminActivity extends AppCompatActivity {
         String city = etCity.getText().toString();
         String cost = etCost.getText().toString();
         String resort = etResort.getText().toString();
+        String rating = String.valueOf(ratingBar.getRating());
 
         holidayDeal.setCity(city);
         holidayDeal.setCost(cost);
         holidayDeal.setResort(resort);
+        holidayDeal.setRating(rating);
 
         //holidayDeal = new HolidayDeal(city, resort, cost);
 

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,7 +18,10 @@ import com.appdevgenie.travelmanticsii.activities.AdminActivity;
 import com.appdevgenie.travelmanticsii.models.HolidayDeal;
 import com.bumptech.glide.Glide;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import static com.appdevgenie.travelmanticsii.utils.Constants.INTENT_EXTRA_DEAL;
 
@@ -43,13 +47,18 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
 
         HolidayDeal holidayDeal = holidayDeals.get(holder.getAdapterPosition());
         holder.tvCity.setText(holidayDeal.getCity());
-        holder.tvCost.setText(holidayDeal.getCost());
+
+        DecimalFormat format = new DecimalFormat("###,###,##0.00");
+        String currency = format.format(Double.parseDouble(holidayDeal.getCost()));
+        holder.tvCost.setText(currency);
+
         holder.tvResort.setText(holidayDeal.getResort());
+        holder.ratingBar.setRating(Float.valueOf(holidayDeal.getRating()));
 
         Glide
                 .with(context)
                 .load(holidayDeal.getImageUrl())
-                .centerCrop()
+                .fitCenter()
                 .placeholder(R.drawable.ic_hotel_black_24dp)
                 .into(holder.imageView);
     }
@@ -74,6 +83,7 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
         private TextView tvResort;
         private TextView tvCost;
         private ImageView imageView;
+        private RatingBar ratingBar;
 
         public UserViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -82,6 +92,7 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
             tvResort = itemView.findViewById(R.id.tvItemDestinationResort);
             tvCost = itemView.findViewById(R.id.tvItemDestinationCost);
             imageView = itemView.findViewById(R.id.ivItemDestination);
+            ratingBar = itemView.findViewById(R.id.ratingBar);
 
             itemView.setOnClickListener(this);
         }
