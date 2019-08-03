@@ -7,10 +7,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,6 +22,7 @@ import com.appdevgenie.travelmanticsii.models.HolidayDeal;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -47,6 +50,7 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
     private ArrayList<String> keys = new ArrayList<>();
     private Context context;
     private UserRecyclerAdapter userRecyclerAdapter;
+    private FloatingActionButton floatingActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +104,18 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
 
         context = getApplicationContext();
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        floatingActionButton = findViewById(R.id.floatingActionButton);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(UserActivity.this, AdminActivity.class);
+                startActivity(intent);
+            }
+        });
+
         recyclerView = findViewById(R.id.rvResortList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         userRecyclerAdapter = new UserRecyclerAdapter(context, holidayDeals);
@@ -123,10 +139,10 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
         int selectedItem = item.getItemId();
 
         switch (selectedItem) {
-            case R.id.add_menu:
+            /*case R.id.add_menu:
                 Intent intent = new Intent(UserActivity.this, AdminActivity.class);
                 startActivity(intent);
-                return true;
+                return true;*/
 
             case R.id.sign_out_menu:
                 AuthUI.getInstance()

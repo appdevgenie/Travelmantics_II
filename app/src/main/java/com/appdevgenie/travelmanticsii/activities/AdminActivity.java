@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.appdevgenie.travelmanticsii.R;
 import com.appdevgenie.travelmanticsii.models.HolidayDeal;
@@ -23,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -43,6 +45,7 @@ public class AdminActivity extends AppCompatActivity {
     private EditText etResort;
     private Button bSelectImage;
     private ImageView imageView;
+    private FloatingActionButton floatingActionButton;
 
     private HolidayDeal holidayDeal = new HolidayDeal();
 
@@ -80,6 +83,9 @@ public class AdminActivity extends AppCompatActivity {
 
     private void setupVariables() {
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         etCity = findViewById(R.id.etItemDestinationCity);
         etCost = findViewById(R.id.etItemDestinationCost);
         etResort = findViewById(R.id.etItemDestinationResort);
@@ -99,6 +105,16 @@ public class AdminActivity extends AppCompatActivity {
         });
 
         imageView = findViewById(R.id.ivResort);
+
+        floatingActionButton = findViewById(R.id.floatingActionButton);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveHolidayDeal();
+                Toast.makeText(getApplicationContext(), "Holiday deal saved!", Toast.LENGTH_LONG).show();
+                finish();
+            }
+        });
     }
 
     @Override
@@ -113,11 +129,11 @@ public class AdminActivity extends AppCompatActivity {
 
         int selectedItem = item.getItemId();
         switch (selectedItem) {
-            case R.id.save_menu:
+            /*case R.id.save_menu:
                 saveHolidayDeal();
                 Toast.makeText(getApplicationContext(), "Holiday deal saved!", Toast.LENGTH_LONG).show();
                 finish();
-                return true;
+                return true;*/
 
             case R.id.delete_menu:
                 deleteHolidayDeal();
