@@ -35,7 +35,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import static com.appdevgenie.travelmanticsii.activities.UserActivity.isAdmin;
@@ -51,15 +50,12 @@ public class AdminActivity extends AppCompatActivity {
     private EditText etCity;
     private EditText etCost;
     private EditText etResort;
-    private Button bSelectImage;
     private ImageView imageView;
-    private FloatingActionButton floatingActionButton;
     private RatingBar ratingBar;
     private ProgressBar progressBar;
 
     private HolidayDeal holidayDeal = new HolidayDeal();
 
-    private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private FirebaseStorage firebaseStorage;
     private StorageReference storageReference;
@@ -69,7 +65,7 @@ public class AdminActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin);
 
-        firebaseDatabase = FirebaseDatabase.getInstance();
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference().child(DB_CHILD_DEAL);
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference().child(DB_CHILD_DEAL_PICS);
@@ -115,7 +111,7 @@ public class AdminActivity extends AppCompatActivity {
 
         progressBar = findViewById(R.id.progressBar);
 
-        bSelectImage = findViewById(R.id.bSelectImage);
+        Button bSelectImage = findViewById(R.id.bSelectImage);
         bSelectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -123,14 +119,14 @@ public class AdminActivity extends AppCompatActivity {
                 Intent imageIntent = new Intent(Intent.ACTION_GET_CONTENT);
                 imageIntent.setType("image/jpeg");
                 imageIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                startActivityForResult(imageIntent.createChooser(imageIntent, "Select image"), RC_IMAGE_SELECT);
+                startActivityForResult(imageIntent.createChooser(imageIntent, getString(R.string.select_image)), RC_IMAGE_SELECT);
             }
         });
 
         imageView = findViewById(R.id.ivResort);
         ratingBar = findViewById(R.id.ratingBar);
 
-        floatingActionButton = findViewById(R.id.floatingActionButton);
+        FloatingActionButton floatingActionButton = findViewById(R.id.floatingActionButton);
         if (isAdmin) {
             floatingActionButton.show();
             enableViews(true);
@@ -174,16 +170,8 @@ public class AdminActivity extends AppCompatActivity {
 
         int selectedItem = item.getItemId();
         switch (selectedItem) {
-            /*case R.id.save_menu:
-                saveHolidayDeal();
-                Toast.makeText(getApplicationContext(), "Holiday deal saved!", Toast.LENGTH_LONG).show();
-                finish();
-                return true;*/
-
             case R.id.delete_menu:
                 deleteHolidayDeal();
-
-                //finish();
                 return true;
         }
 
@@ -258,7 +246,7 @@ public class AdminActivity extends AppCompatActivity {
         String resort = etResort.getText().toString();
         String rating = String.valueOf(ratingBar.getRating());
 
-        if(!TextUtils.isEmpty(city) && !TextUtils.isEmpty(resort)) {
+        if (!TextUtils.isEmpty(city) && !TextUtils.isEmpty(resort)) {
 
             holidayDeal.setCity(city);
             holidayDeal.setCost(cost);
@@ -278,26 +266,22 @@ public class AdminActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Holiday deal saved!", Toast.LENGTH_LONG).show();
             finish();
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        }else{
+        } else {
             Toast.makeText(getApplicationContext(), "Enter all fields!", Toast.LENGTH_LONG).show();
         }
 
     }
 
     private void deleteHolidayDeal() {
-
-        /*if (holidayDeal.getId() == null) {
-            Toast.makeText(getApplicationContext(), "First create Holiday deal!", Toast.LENGTH_LONG).show();
-            return;
-        }*/
-        if(holidayDeal.getId() != null) {
+        
+        if (holidayDeal.getId() != null) {
             databaseReference.child(holidayDeal.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     Toast.makeText(getApplicationContext(), "Holiday deal deleted!", Toast.LENGTH_LONG).show();
                 }
             });
-            if(holidayDeal.getImageName() != null && !holidayDeal.getImageName().isEmpty()) {
+            if (holidayDeal.getImageName() != null && !holidayDeal.getImageName().isEmpty()) {
                 StorageReference imageRef = firebaseStorage.getReference().child(holidayDeal.getImageName());
                 imageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -314,7 +298,7 @@ public class AdminActivity extends AppCompatActivity {
 
             finish();
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        }else{
+        } else {
             Toast.makeText(getApplicationContext(), "First add Holiday deal!", Toast.LENGTH_LONG).show();
         }
     }

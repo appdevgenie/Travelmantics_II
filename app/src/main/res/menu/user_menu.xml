@@ -9,7 +9,7 @@
 
     <item
         android:id="@+id/sign_out_menu"
-        android:title="Sign out"
+        android:title="@string/sign_out"
         app:showAsAction="ifRoom"/>
 
 </menu>

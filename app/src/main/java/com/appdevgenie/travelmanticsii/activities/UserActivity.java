@@ -46,19 +46,15 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
 
     public static final String TAG = "userActivity";
 
-    private RecyclerView recyclerView;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference databaseReference;
-    private DatabaseReference databaseAdminReference;
     private ArrayList<HolidayDeal> holidayDeals = new ArrayList<>();
     private ArrayList<String> keys = new ArrayList<>();
     private Context context;
     private UserRecyclerAdapter userRecyclerAdapter;
     private FloatingActionButton floatingActionButton;
     public static boolean isAdmin;
-    private TextView tvUser;
     private ImageView ivNetwork;
 
     @Override
@@ -72,14 +68,12 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
     }
 
     private void setupFirebaseDatabase() {
-
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child(DB_CHILD_DEAL);
+        DatabaseReference databaseReference = firebaseDatabase.getReference().child(DB_CHILD_DEAL);
         databaseReference.addChildEventListener(this);
     }
 
     private void setupFirebaseAuth() {
-
         firebaseAuth = FirebaseAuth.getInstance();
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -98,7 +92,7 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
 
         isAdmin = false;
 
-        databaseAdminReference = firebaseDatabase.getReference().child(DB_CHILD_ADMIN).child(uid);
+        DatabaseReference databaseAdminReference = firebaseDatabase.getReference().child(DB_CHILD_ADMIN).child(uid);
         databaseAdminReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -128,7 +122,7 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
             }
         });
 
-        tvUser = findViewById(R.id.tvUser);
+        TextView tvUser = findViewById(R.id.tvUser);
         if(firebaseAuth.getCurrentUser() != null) {
              tvUser.setText(firebaseAuth.getCurrentUser().getDisplayName());
         }
@@ -164,7 +158,6 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
     }
 
     private void setupVariables() {
-
         context = getApplicationContext();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -174,11 +167,6 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
 
         floatingActionButton = findViewById(R.id.floatingActionButton);
         floatingActionButton.hide();
-        /*if(isAdmin){
-            floatingActionButton.show();
-        }else{
-            floatingActionButton.hide();
-        }*/
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -186,15 +174,12 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
                 startActivity(intent);
             }
         });
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.user_menu, menu);
-
         return true;
     }
 
@@ -204,11 +189,6 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
         int selectedItem = item.getItemId();
 
         switch (selectedItem) {
-            /*case R.id.add_menu:
-                Intent intent = new Intent(UserActivity.this, AdminActivity.class);
-                startActivity(intent);
-                return true;*/
-
             case R.id.sign_out_menu:
                 AuthUI.getInstance()
                         .signOut(this)
@@ -247,7 +227,7 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
     }
 
     private void populateRecyclerView() {
-        recyclerView = findViewById(R.id.rvResortList);
+        RecyclerView recyclerView = findViewById(R.id.rvResortList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         userRecyclerAdapter = new UserRecyclerAdapter(context, holidayDeals);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -292,10 +272,8 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
 
     @Override
     public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
         Log.d(TAG, "onChildRemoved: ");
 
-        //HolidayDeal holidayDeal = dataSnapshot.getValue(HolidayDeal.class);
         String key = dataSnapshot.getKey();
         int index = keys.indexOf(key);
         if (index != -1) {
@@ -303,25 +281,6 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
             keys.remove(index);
             userRecyclerAdapter.notifyDataSetChanged();
         }
-
-        /*String key = dataSnapshot.getKey();
-
-        for (int i = 0; i < holidayDeals.size(); i++) {
-            if (holidayDeals.get(i).getId().equals(key)) {
-                holidayDeals.remove(i);
-                break;
-            }
-        }
-
-        userRecyclerAdapter.notifyDataSetChanged();*/
-
-        //HolidayDeal holidayDeal = dataSnapshot.getValue(HolidayDeal.class);
-        //holidayDeals.remove(holidayDeal);
-        //userRecyclerAdapter.notifyDataSetChanged();
-        //userRecyclerAdapter.setAdapterData(holidayDeals);
-
-        /*String posKey = databaseReference.child(holidayDeal.getId()).getKey();
-        holidayDeals.remove(holidayDeal.getId());*/
     }
 
     @Override

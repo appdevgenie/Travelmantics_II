@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,10 +17,8 @@ import com.appdevgenie.travelmanticsii.activities.AdminActivity;
 import com.appdevgenie.travelmanticsii.models.HolidayDeal;
 import com.bumptech.glide.Glide;
 
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import static com.appdevgenie.travelmanticsii.utils.Constants.INTENT_EXTRA_DEAL;
 
