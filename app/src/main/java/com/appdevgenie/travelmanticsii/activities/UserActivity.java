@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.appdevgenie.travelmanticsii.utils.CheckNetworkConnection.isNetworkConnected;
 import static com.appdevgenie.travelmanticsii.utils.Constants.DB_CHILD_ADMIN;
 import static com.appdevgenie.travelmanticsii.utils.Constants.DB_CHILD_DEAL;
 import static com.appdevgenie.travelmanticsii.utils.Constants.RC_SIGN_IN;
@@ -57,6 +59,7 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
     private FloatingActionButton floatingActionButton;
     public static boolean isAdmin;
     private TextView tvUser;
+    private ImageView ivNetwork;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +69,7 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
         setupVariables();
         setupFirebaseDatabase();
         setupFirebaseAuth();
+
 
     }
 
@@ -168,6 +172,8 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        ivNetwork = findViewById(R.id.ivNetwork);
+
         floatingActionButton = findViewById(R.id.floatingActionButton);
         floatingActionButton.hide();
         /*if(isAdmin){
@@ -230,8 +236,15 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
     @Override
     protected void onResume() {
         super.onResume();
-        attachListener();
 
+        if(isNetworkConnected(context)) {
+            attachListener();
+            ivNetwork.setImageResource(R.drawable.ic_signal_wifi_4_bar_black_24dp);
+        }else {
+            Toast.makeText(context, "No network connection!", Toast.LENGTH_SHORT).show();
+            ivNetwork.setImageResource(R.drawable.ic_signal_wifi_off_black_24dp);
+        }
+        
         populateRecyclerView();
     }
 
