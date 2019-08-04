@@ -23,6 +23,7 @@ import com.appdevgenie.travelmanticsii.R;
 import com.appdevgenie.travelmanticsii.models.HolidayDeal;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -33,9 +34,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Locale;
 
+import static com.appdevgenie.travelmanticsii.activities.UserActivity.isAdmin;
 import static com.appdevgenie.travelmanticsii.utils.Constants.DB_CHILD_DEAL;
 import static com.appdevgenie.travelmanticsii.utils.Constants.DB_CHILD_DEAL_PICS;
 import static com.appdevgenie.travelmanticsii.utils.Constants.INTENT_EXTRA_DEAL;
@@ -115,8 +115,18 @@ public class AdminActivity extends AppCompatActivity {
         });
 
         imageView = findViewById(R.id.ivResort);
+        ratingBar = findViewById(R.id.ratingBar);
 
         floatingActionButton = findViewById(R.id.floatingActionButton);
+        if (isAdmin) {
+            floatingActionButton.show();
+            enableViews(true);
+            bSelectImage.setVisibility(View.VISIBLE);
+        } else {
+            floatingActionButton.hide();
+            enableViews(false);
+            bSelectImage.setVisibility(View.INVISIBLE);
+        }
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -125,14 +135,25 @@ public class AdminActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
 
-        ratingBar = findViewById(R.id.ratingBar);
+    private void enableViews(boolean isEnabled) {
+        etCity.setEnabled(isEnabled);
+        etCost.setEnabled(isEnabled);
+        etResort.setEnabled(isEnabled);
+        ratingBar.setIsIndicator(isEnabled);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.admin_menu, menu);
+        MenuItem menuItem = menu.findItem(R.id.delete_menu);
+        if (isAdmin) {
+            menuItem.setVisible(true);
+        } else {
+            menuItem.setVisible(false);
+        }
         return true;
     }
 
@@ -150,7 +171,7 @@ public class AdminActivity extends AppCompatActivity {
             case R.id.delete_menu:
                 deleteHolidayDeal();
 
-                finish();
+                //finish();
                 return true;
         }
 
@@ -235,13 +256,35 @@ public class AdminActivity extends AppCompatActivity {
 
     private void deleteHolidayDeal() {
 
-        if (holidayDeal != null) {
+        /*if (holidayDeal.getId() == null) {
+            Toast.makeText(getApplicationContext(), "First create Holiday deal!", Toast.LENGTH_LONG).show();
+            return;
+        }*/
+        if(holidayDeal.getId() != null) {
             databaseReference.child(holidayDeal.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     Toast.makeText(getApplicationContext(), "Holiday deal deleted!", Toast.LENGTH_LONG).show();
                 }
             });
+            /*if(holidayDeal.getImageName() != null && !holidayDeal.getImageName().isEmpty()) {
+                StorageReference picRef = firebaseStorage.getReference().child(holidayDeal.getImageName());
+                picRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(getApplicationContext(), "Holiday deal image deleted!", Toast.LENGTH_LONG).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), "Unable to delete Holiday deal image!", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }*/
+
+            finish();
+        }else{
+            Toast.makeText(getApplicationContext(), "First add Holiday deal!", Toast.LENGTH_LONG).show();
         }
     }
 }

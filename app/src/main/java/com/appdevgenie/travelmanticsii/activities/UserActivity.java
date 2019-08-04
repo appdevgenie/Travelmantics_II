@@ -8,6 +8,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.appdevgenie.travelmanticsii.utils.Constants.DB_CHILD_ADMIN;
 import static com.appdevgenie.travelmanticsii.utils.Constants.DB_CHILD_DEAL;
 import static com.appdevgenie.travelmanticsii.utils.Constants.RC_SIGN_IN;
 
@@ -46,20 +49,24 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
     private FirebaseAuth.AuthStateListener authStateListener;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
+    private DatabaseReference databaseAdminReference;
     private ArrayList<HolidayDeal> holidayDeals = new ArrayList<>();
     private ArrayList<String> keys = new ArrayList<>();
     private Context context;
     private UserRecyclerAdapter userRecyclerAdapter;
     private FloatingActionButton floatingActionButton;
+    public static boolean isAdmin;
+    private TextView tvUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
 
+        setupVariables();
         setupFirebaseDatabase();
         setupFirebaseAuth();
-        setupVariables();
+
     }
 
     private void setupFirebaseDatabase() {
@@ -78,10 +85,52 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
                 if (firebaseAuth.getCurrentUser() == null) {
                     signIn();
                 } else {
+                    checkIfAdmin(firebaseAuth.getUid());
                     //Toast.makeText(getApplicationContext(), "Welcome back " + firebaseAuth.getCurrentUser().getDisplayName(), Toast.LENGTH_LONG).show();
                 }
             }
         };
+    }
+
+    private void checkIfAdmin(String uid) {
+
+        isAdmin = false;
+
+        databaseAdminReference = firebaseDatabase.getReference().child(DB_CHILD_ADMIN).child(uid);
+        databaseAdminReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                isAdmin = true;
+                floatingActionButton.show();
+                //Toast.makeText(context, String.valueOf(isAdmin), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        tvUser = findViewById(R.id.tvUser);
+        if(firebaseAuth.getCurrentUser() != null) {
+             tvUser.setText(firebaseAuth.getCurrentUser().getDisplayName());
+        }
+
     }
 
     private void signIn() {
@@ -92,12 +141,24 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
                 new AuthUI.IdpConfig.GoogleBuilder().build());
 
         // Create and launch sign-in intent
-        this.startActivityForResult(
+        startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
                         .setAvailableProviders(providers)
+                        .setIsSmartLockEnabled(false)
                         .build(),
                 RC_SIGN_IN);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == RC_SIGN_IN && resultCode == RESULT_OK){
+            Toast.makeText(context, "signed in", Toast.LENGTH_SHORT).show();
+            setupFirebaseDatabase();
+            populateRecyclerView();
+        }
     }
 
     private void setupVariables() {
@@ -108,6 +169,12 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
         setSupportActionBar(toolbar);
 
         floatingActionButton = findViewById(R.id.floatingActionButton);
+        floatingActionButton.hide();
+        /*if(isAdmin){
+            floatingActionButton.show();
+        }else{
+            floatingActionButton.hide();
+        }*/
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -115,12 +182,6 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
                 startActivity(intent);
             }
         });
-
-        recyclerView = findViewById(R.id.rvResortList);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
-        userRecyclerAdapter = new UserRecyclerAdapter(context, holidayDeals);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setAdapter(userRecyclerAdapter);
 
     }
 
@@ -170,6 +231,16 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
     protected void onResume() {
         super.onResume();
         attachListener();
+
+        populateRecyclerView();
+    }
+
+    private void populateRecyclerView() {
+        recyclerView = findViewById(R.id.rvResortList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+        userRecyclerAdapter = new UserRecyclerAdapter(context, holidayDeals);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(userRecyclerAdapter);
     }
 
     public void attachListener() {
