@@ -273,7 +273,7 @@ public class AdminActivity extends AppCompatActivity {
     }
 
     private void deleteHolidayDeal() {
-        
+
         if (holidayDeal.getId() != null) {
             databaseReference.child(holidayDeal.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
