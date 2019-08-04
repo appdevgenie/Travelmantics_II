@@ -3,6 +3,7 @@ package com.appdevgenie.travelmanticsii.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,6 +35,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import static com.appdevgenie.travelmanticsii.activities.UserActivity.isAdmin;
 import static com.appdevgenie.travelmanticsii.utils.Constants.DB_CHILD_DEAL;
@@ -79,9 +81,10 @@ public class AdminActivity extends AppCompatActivity {
                 etCity.setText(holidayDeal.getCity());
                 etResort.setText(holidayDeal.getResort());
 
-                DecimalFormat format = new DecimalFormat("###,###,##0.00");
-                String currency = format.format(Double.parseDouble(holidayDeal.getCost()));
-                etCost.setText(currency);
+                //DecimalFormat format = new DecimalFormat("###,###,##0.00");
+                //NumberFormat format = NumberFormat.getCurrencyInstance();
+                //String currency = format.format(Double.parseDouble(holidayDeal.getCost()));
+                etCost.setText(holidayDeal.getCost());
 
                 ratingBar.setRating(Float.valueOf(holidayDeal.getRating()));
 
@@ -131,8 +134,7 @@ public class AdminActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 saveHolidayDeal();
-                Toast.makeText(getApplicationContext(), "Holiday deal saved!", Toast.LENGTH_LONG).show();
-                finish();
+
             }
         });
     }
@@ -141,7 +143,7 @@ public class AdminActivity extends AppCompatActivity {
         etCity.setEnabled(isEnabled);
         etCost.setEnabled(isEnabled);
         etResort.setEnabled(isEnabled);
-        ratingBar.setIsIndicator(isEnabled);
+        ratingBar.setIsIndicator(!isEnabled);
     }
 
     @Override
@@ -189,12 +191,12 @@ public class AdminActivity extends AppCompatActivity {
             final StorageReference storageImageRef = storageReference.child(imageUri.getLastPathSegment());
             storageImageRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                public void onSuccess(final UploadTask.TaskSnapshot taskSnapshot) {
                     storageImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
                             String url = uri.toString();
-                            String imagePath = uri.getPath();
+                            String imagePath = taskSnapshot.getMetadata().getPath();
                             holidayDeal.setImageUrl(url);
                             holidayDeal.setImageName(imagePath);
 
@@ -237,19 +239,27 @@ public class AdminActivity extends AppCompatActivity {
         String resort = etResort.getText().toString();
         String rating = String.valueOf(ratingBar.getRating());
 
-        holidayDeal.setCity(city);
-        holidayDeal.setCost(cost);
-        holidayDeal.setResort(resort);
-        holidayDeal.setRating(rating);
+        if(!TextUtils.isEmpty(city) && !TextUtils.isEmpty(cost) && !TextUtils.isEmpty(resort)) {
 
-        //holidayDeal = new HolidayDeal(city, resort, cost);
+            holidayDeal.setCity(city);
+            holidayDeal.setCost(cost);
+            holidayDeal.setResort(resort);
+            holidayDeal.setRating(rating);
 
-        if (holidayDeal.getId() == null) {
-            //new holiday deal
-            databaseReference.push().setValue(holidayDeal);
-        } else {
-            //edit holiday deal
-            databaseReference.child(holidayDeal.getId()).setValue(holidayDeal);
+            //holidayDeal = new HolidayDeal(city, resort, cost);
+
+            if (holidayDeal.getId() == null) {
+                //new holiday deal
+                databaseReference.push().setValue(holidayDeal);
+            } else {
+                //edit holiday deal
+                databaseReference.child(holidayDeal.getId()).setValue(holidayDeal);
+            }
+
+            Toast.makeText(getApplicationContext(), "Holiday deal saved!", Toast.LENGTH_LONG).show();
+            finish();
+        }else{
+            Toast.makeText(getApplicationContext(), "Enter all fields!", Toast.LENGTH_LONG).show();
         }
 
     }
@@ -267,9 +277,9 @@ public class AdminActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Holiday deal deleted!", Toast.LENGTH_LONG).show();
                 }
             });
-            /*if(holidayDeal.getImageName() != null && !holidayDeal.getImageName().isEmpty()) {
-                StorageReference picRef = firebaseStorage.getReference().child(holidayDeal.getImageName());
-                picRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            if(holidayDeal.getImageName() != null && !holidayDeal.getImageName().isEmpty()) {
+                StorageReference imageRef = firebaseStorage.getReference().child(holidayDeal.getImageName());
+                imageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Toast.makeText(getApplicationContext(), "Holiday deal image deleted!", Toast.LENGTH_LONG).show();
@@ -280,7 +290,7 @@ public class AdminActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Unable to delete Holiday deal image!", Toast.LENGTH_LONG).show();
                     }
                 });
-            }*/
+            }
 
             finish();
         }else{
