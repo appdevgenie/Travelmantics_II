@@ -49,9 +49,9 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
         holder.tvCity.setText(holidayDeal.getCity());
 
         //DecimalFormat format = new DecimalFormat("###,###,##0.00");
-        //NumberFormat format = NumberFormat.getCurrencyInstance();
+        NumberFormat format = NumberFormat.getCurrencyInstance();
         //String currency = format.format(Double.parseDouble(holidayDeal.getCost()));
-        holder.tvCost.setText(holidayDeal.getCost());
+        holder.tvCost.setText(format.format(holidayDeal.getCost()));
 
         holder.tvResort.setText(holidayDeal.getResort());
         holder.ratingBar.setRating(Float.valueOf(holidayDeal.getRating()));

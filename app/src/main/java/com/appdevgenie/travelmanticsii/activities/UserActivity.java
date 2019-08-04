@@ -69,8 +69,6 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
         setupVariables();
         setupFirebaseDatabase();
         setupFirebaseAuth();
-
-
     }
 
     private void setupFirebaseDatabase() {
@@ -244,7 +242,7 @@ public class UserActivity extends AppCompatActivity implements ChildEventListene
             Toast.makeText(context, "No network connection!", Toast.LENGTH_SHORT).show();
             ivNetwork.setImageResource(R.drawable.ic_signal_wifi_off_black_24dp);
         }
-        
+
         populateRecyclerView();
     }
 

@@ -49,8 +49,8 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:ems="10"
-        android:hint="City"
-        android:inputType="textPersonName"
+        android:hint="City/Country"
+        android:inputType="textCapWords"
         app:layout_constraintBottom_toBottomOf="@+id/imageView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView2"
@@ -75,7 +75,7 @@
         android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="Resort"
-        android:inputType="textPersonName"
+        android:inputType="textCapWords"
         app:layout_constraintEnd_toEndOf="@+id/etItemDestinationCost"
         app:layout_constraintStart_toStartOf="@+id/etItemDestinationCost"
         app:layout_constraintTop_toBottomOf="@+id/etItemDestinationCost" />
@@ -179,5 +179,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etItemDestinationResort" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/ivResort"
+        app:layout_constraintEnd_toEndOf="@+id/ivResort"
+        app:layout_constraintStart_toStartOf="@+id/ivResort"
+        app:layout_constraintTop_toTopOf="@+id/ivResort" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

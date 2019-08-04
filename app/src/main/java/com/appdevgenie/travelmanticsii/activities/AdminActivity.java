@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
@@ -54,6 +55,7 @@ public class AdminActivity extends AppCompatActivity {
     private ImageView imageView;
     private FloatingActionButton floatingActionButton;
     private RatingBar ratingBar;
+    private ProgressBar progressBar;
 
     private HolidayDeal holidayDeal = new HolidayDeal();
 
@@ -82,9 +84,9 @@ public class AdminActivity extends AppCompatActivity {
                 etResort.setText(holidayDeal.getResort());
 
                 //DecimalFormat format = new DecimalFormat("###,###,##0.00");
-                //NumberFormat format = NumberFormat.getCurrencyInstance();
+                NumberFormat format = NumberFormat.getCurrencyInstance();
                 //String currency = format.format(Double.parseDouble(holidayDeal.getCost()));
-                etCost.setText(holidayDeal.getCost());
+                etCost.setText(format.format(holidayDeal.getCost()));
 
                 ratingBar.setRating(Float.valueOf(holidayDeal.getRating()));
 
@@ -98,17 +100,25 @@ public class AdminActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            }
+        });
 
         etCity = findViewById(R.id.etItemDestinationCity);
         etCost = findViewById(R.id.etItemDestinationCost);
         etResort = findViewById(R.id.etItemDestinationResort);
 
+        progressBar = findViewById(R.id.progressBar);
+
         bSelectImage = findViewById(R.id.bSelectImage);
         bSelectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                //loadImage("");
 
                 Intent imageIntent = new Intent(Intent.ACTION_GET_CONTENT);
                 imageIntent.setType("image/jpeg");
@@ -188,6 +198,8 @@ public class AdminActivity extends AppCompatActivity {
 
             Uri imageUri = data.getData();
 
+            progressBar.setVisibility(View.VISIBLE);
+
             final StorageReference storageImageRef = storageReference.child(imageUri.getLastPathSegment());
             storageImageRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -202,7 +214,14 @@ public class AdminActivity extends AppCompatActivity {
 
                             loadImage(url);
 
+                            progressBar.setVisibility(View.GONE);
                             Toast.makeText(getApplicationContext(), "Image saved!", Toast.LENGTH_LONG).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(getApplicationContext(), "Error loading image!", Toast.LENGTH_LONG).show();
                         }
                     });
 
@@ -235,11 +254,11 @@ public class AdminActivity extends AppCompatActivity {
     private void saveHolidayDeal() {
 
         String city = etCity.getText().toString();
-        String cost = etCost.getText().toString();
+        float cost = Float.parseFloat(etCost.getText().toString());
         String resort = etResort.getText().toString();
         String rating = String.valueOf(ratingBar.getRating());
 
-        if(!TextUtils.isEmpty(city) && !TextUtils.isEmpty(cost) && !TextUtils.isEmpty(resort)) {
+        if(!TextUtils.isEmpty(city) && !TextUtils.isEmpty(resort)) {
 
             holidayDeal.setCity(city);
             holidayDeal.setCost(cost);
@@ -258,6 +277,7 @@ public class AdminActivity extends AppCompatActivity {
 
             Toast.makeText(getApplicationContext(), "Holiday deal saved!", Toast.LENGTH_LONG).show();
             finish();
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }else{
             Toast.makeText(getApplicationContext(), "Enter all fields!", Toast.LENGTH_LONG).show();
         }
@@ -293,6 +313,7 @@ public class AdminActivity extends AppCompatActivity {
             }
 
             finish();
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }else{
             Toast.makeText(getApplicationContext(), "First add Holiday deal!", Toast.LENGTH_LONG).show();
         }

@@ -8,7 +8,7 @@ public class HolidayDeal implements Parcelable {
     private String id;
     private String city;
     private String resort;
-    private String cost;
+    private float cost;
     private String imageUrl;
     private String imageName;
     private String rating;
@@ -16,7 +16,7 @@ public class HolidayDeal implements Parcelable {
     public HolidayDeal() {
     }
 
-    public HolidayDeal(String city, String resort, String cost, String imageUrl, String imageName, String rating) {
+    public HolidayDeal(String city, String resort, float cost, String imageUrl, String imageName, String rating) {
         this.city = city;
         this.resort = resort;
         this.cost = cost;
@@ -25,11 +25,12 @@ public class HolidayDeal implements Parcelable {
         this.rating = rating;
     }
 
+
     protected HolidayDeal(Parcel in) {
         id = in.readString();
         city = in.readString();
         resort = in.readString();
-        cost = in.readString();
+        cost = in.readFloat();
         imageUrl = in.readString();
         imageName = in.readString();
         rating = in.readString();
@@ -71,11 +72,11 @@ public class HolidayDeal implements Parcelable {
         this.resort = resort;
     }
 
-    public String getCost() {
+    public float getCost() {
         return cost;
     }
 
-    public void setCost(String cost) {
+    public void setCost(float cost) {
         this.cost = cost;
     }
 
@@ -110,12 +111,15 @@ public class HolidayDeal implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+
         parcel.writeString(id);
         parcel.writeString(city);
         parcel.writeString(resort);
-        parcel.writeString(cost);
+        parcel.writeFloat(cost);
         parcel.writeString(imageUrl);
         parcel.writeString(imageName);
         parcel.writeString(rating);
     }
+
+
 }
